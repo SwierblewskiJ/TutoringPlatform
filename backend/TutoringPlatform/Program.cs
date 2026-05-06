@@ -28,6 +28,7 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -45,6 +46,8 @@ app.UseExceptionHandler();
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 var summaries = new[]
 {
