@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TutoringPlatform.Data;
+using TutoringPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddExceptionHandler<TutoringPlatform.Middleware.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 var app = builder.Build();
 
