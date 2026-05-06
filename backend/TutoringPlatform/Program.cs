@@ -27,6 +27,7 @@ builder.Services.AddExceptionHandler<TutoringPlatform.Middleware.GlobalException
 builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

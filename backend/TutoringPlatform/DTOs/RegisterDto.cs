@@ -1,4 +1,4 @@
-﻿namespace TutoringPlatform.Models;
+﻿namespace TutoringPlatform.DTOs;
 
 public class RegisterDto
 {
