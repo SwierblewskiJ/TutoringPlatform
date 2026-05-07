@@ -9,7 +9,9 @@ const Wrapper = () => {
             <main className="content">
                 <Outlet/>
             </main>
-            <footer className="footer">© 2026 Kredkorepetycje</footer>       
+            <footer className="footer">
+                <p className="footer-text">© 2026 Kredkorepetycje</p>
+            </footer>       
         </div>
     );
 };

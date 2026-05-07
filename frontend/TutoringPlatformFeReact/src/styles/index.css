@@ -89,3 +89,25 @@ nav-links a {
   border-radius: 8px;
   cursor: pointer;
 }
+
+.content {
+  flex:1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  box-sizing: border-box;
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  background-color: var(--bg-dark);
+}
+
+.footer-text {
+  color: var(--text-p); 
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
