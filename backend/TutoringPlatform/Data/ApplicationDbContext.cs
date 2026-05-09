@@ -22,4 +22,5 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<User> Users { get; set; }  
     public DbSet<TutoringAd> TutoringAds { get; set; }
+    public DbSet<User> Users { get; set; }
 }
