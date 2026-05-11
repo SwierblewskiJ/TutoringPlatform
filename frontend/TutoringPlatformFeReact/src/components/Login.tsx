@@ -71,7 +71,6 @@ const Login = () => {
                     {error}
                 </div>
             )}
-        {error && <p style={{ color: 'var(--accent)', fontSize: '0.8rem' }}>{error}</p>}
 
 
           <button type="submit" className="btn-primary auth-button" disabled={isLoading}>
@@ -80,7 +79,7 @@ const Login = () => {
         </form>
 
         <div className="auth-footer">
-          Nie masz konta? <Link to="/register">Zarejestruj się</Link> lub <Link to="/register">dołącz jako tutor</Link>
+          Nie masz konta? {" "}<Link to="/register?role=Student">Zarejestruj się</Link> lub <Link to="/register?role=Tutor">dołącz jako tutor</Link>
         </div>
       </div>
     </div>

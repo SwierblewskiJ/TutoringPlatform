@@ -1,33 +1,50 @@
-import { useState } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { fetchData } from "../services/ApiService";
 
 const Register = () => {
+  const [searchParams] = useSearchParams();
+    
+  const initialRole = searchParams.get('role') || 'Student';
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    role: 'Student' 
+    role: initialRole
   });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setIsLoading(true);
     try {
       await fetchData<string>('/Auth/register', {
             method: 'POST',
             body: formData
             });
       navigate('/login'); 
-    } catch (err) {
-      console.error(err);
+    } catch (error : any) {
+    setError(error.message);
+    } finally {
+        setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const roleFromUrl = searchParams.get('role');
+    if (roleFromUrl) {
+      setFormData(prev => ({ ...prev, role: roleFromUrl }));
+    }
+  }, [searchParams]);
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Stwórz konto</h2>
+        <h2>Rejestracja jako {formData.role === 'Tutor' ? 'Tutor' : 'Student'}</h2>
         <p className="auth-subtitle">Dołącz do społeczności kredkorepetycje</p>
 
         <form onSubmit={handleSubmit}>
@@ -37,7 +54,7 @@ const Register = () => {
               type="text" 
               className="form-input" 
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})} 
+              onChange={(e) => {setFormData({...formData, name: e.target.value}); if (error) setError(null); }} 
               required 
             />
           </div>
@@ -72,7 +89,14 @@ const Register = () => {
               required 
             />
           </div>
-          <button type="submit" className="btn-primary auth-button">Zarejestruj się</button>
+
+             {error && (
+                <div className="error-message">
+                    {error}
+                </div>
+            )}
+
+          <button type="submit" className="btn-primary auth-button">{isLoading ? 'Logowanie...' : 'Zarejestruj się'}</button>
         </form>
 
         <div className="auth-footer">
