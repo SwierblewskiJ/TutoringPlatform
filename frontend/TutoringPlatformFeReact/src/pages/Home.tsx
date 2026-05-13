@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { TutoringAd } from "../types/TutoringAds";
 import { fetchData } from "../services/ApiService";
 import AdCard from "../components/AdCard";
+import { useLocation } from "react-router-dom";
 
 
 const Home = () => {
@@ -9,6 +10,8 @@ const Home = () => {
     const [search,setSearch] = useState('');
     const [onlyOnline, setOnlyOnline] = useState(false);
     const [maxPrice, setMaxPrice] = useState<number | ''>('');
+
+    const location = useLocation();
 
     const fetchAds = async () => {
         try{
@@ -25,8 +28,13 @@ const Home = () => {
     };
 
     useEffect(() => {
+        if(location.pathname === '/' && location.search ===''){
+            setSearch('');
+            setOnlyOnline(false);
+            setMaxPrice('');
+        }
         fetchAds();
-    }, []);
+    }, [location]);
 
 
     return (
@@ -38,16 +46,17 @@ const Home = () => {
                     <input type="text"
                             className="form-input" 
                             placeholder="np. Analiza 2..."
-                            onChange={(e) => setSearch(e.target.value)}/>
+                            onChange={(e) => setSearch(e.target.value)}
+                            value={search}/>
                 </div>
 
                 <div className="filter-group">
                     <label>Cena do (zł/h)</label>
-                    <input type="number" className="form-input" onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : '')} />
+                    <input type="number" className="form-input" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : '')} />
                 </div>
 
                 <div className="filter-group checkbox">
-                    <input type="checkbox" id="online" onChange={(e) => setOnlyOnline(e.target.checked)} />
+                    <input type="checkbox" id="online" checked={onlyOnline} onChange={(e) => setOnlyOnline(e.target.checked)} />
                     <label htmlFor="online">Tylko online</label>
                 </div>
 
