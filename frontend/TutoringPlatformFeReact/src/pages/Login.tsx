@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { fetchData } from '../services/ApiService';
 import { useAuth } from '../context/AuthContext';
@@ -7,14 +7,16 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const {login, isAuthenticated} = useAuth();
+  const {login} = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setIsLoading(true);
 
     try {
@@ -25,7 +27,11 @@ const Login = () => {
 
            login(response.token);
 
+            setSuccess(typeof response === 'string' ? response : "Zalogowano pomyślnie!");
+
+            setTimeout(() => {
             navigate('/');
+          }, 1000);
 
         } catch (error : any) {
             setError(error.message);
@@ -34,11 +40,6 @@ const Login = () => {
         }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-        navigate('/'); 
-    }
-}, [isAuthenticated, navigate]);
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -73,10 +74,13 @@ const Login = () => {
 
 
         {error && (
-                <div className="error-message">
-                    {error}
-                </div>
-            )}
+            <div className="error-message">
+                {error}
+            </div>
+        )}
+        
+          {success && <div className="success-message">{success}</div>}
+
 
 
           <button type="submit" className="btn-primary auth-button" disabled={isLoading}>

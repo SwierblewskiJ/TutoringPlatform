@@ -16,6 +16,8 @@ const Register = () => {
     password: '',
     role: initialRole
   });
+  
+  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -23,13 +25,19 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setIsLoading(true);
     try {
-      await fetchData<string>('/Auth/register', {
+      const result = await fetchData<string>('/Auth/register', {
             method: 'POST',
             body: formData
             });
-      navigate('/login'); 
+
+      setSuccess(typeof result === 'string' ? result : "Rejestracja udana!");
+
+      setTimeout(() => {
+        navigate('/login'); 
+      },1000);
     } catch (error : any) {
     setError(error.message);
     } finally {
@@ -64,7 +72,6 @@ const Register = () => {
               className="form-input" 
               value={formData.name}
               onChange={(e) => {setFormData({...formData, name: e.target.value}); if (error) setError(null); }} 
-              required 
             />
           </div>
           <div className="form-group">
@@ -85,7 +92,6 @@ const Register = () => {
               className="form-input" 
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})} 
-              required 
             />
           </div>
           <div className="form-group">
@@ -95,7 +101,6 @@ const Register = () => {
               className="form-input" 
               value={formData.password}
               onChange={(e) => setFormData({...formData, password: e.target.value})} 
-              required 
             />
           </div>
 
@@ -105,7 +110,9 @@ const Register = () => {
                 </div>
             )}
 
-          <button type="submit" className="btn-primary auth-button">{isLoading ? 'Logowanie...' : 'Zarejestruj się'}</button>
+            {success && <div className="success-message">{success}</div>}
+
+          <button type="submit" className="btn-primary auth-button">{isLoading ? 'Ładowanie...' : 'Zarejestruj się'}</button>
         </form>
 
         <div className="auth-footer">
