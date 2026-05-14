@@ -47,6 +47,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAdsService, AdsService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddControllers();
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
