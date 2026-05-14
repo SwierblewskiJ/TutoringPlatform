@@ -1,13 +1,23 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const AuthGard = () => {
-    const token = localStorage.getItem('token');
+interface Props {
+    allowedRoles?: string[];
+}
 
-    if(!token){
+const AuthGard = ({allowedRoles } : Props) => {
+    const { user, isAuthenticated } = useAuth();
+
+    if(!isAuthenticated){
         return <Navigate to="/login" replace/>;
     }
 
-    return <Outlet />
+    if(allowedRoles && user && !allowedRoles.includes(user.role)){
+        return <Navigate to="/" replace />;
+    }
+
+    return <Outlet/>
+
 };
 
 export default AuthGard;
