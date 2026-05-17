@@ -18,8 +18,21 @@ public class ApplicationDbContext : DbContext
             .WithMany(t => t.TutoringAds)
             .HasForeignKey(t => t.TutorId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Lesson>()
+            .HasOne(l => l.TutoringAd)
+            .WithMany(l => l.Lessons)
+            .HasForeignKey(l => l.TutoringAdId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Lesson>()
+            .HasOne(u => u.Student)
+            .WithMany(u => u.BookedLessons)
+            .HasForeignKey(u => u.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public DbSet<User> Users { get; set; }
     public DbSet<TutoringAd> TutoringAds { get; set; }
+    public DbSet<Lesson> Lessons { get; set; }
 }
