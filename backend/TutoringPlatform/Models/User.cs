@@ -9,4 +9,5 @@ public class User
     public UserRole Role { get; set; }
 
     public ICollection<TutoringAd> TutoringAds { get; set; } = new List<TutoringAd>();
+    public ICollection<Lesson> BookedLessons { get; set; } = new List<Lesson>();
 }
