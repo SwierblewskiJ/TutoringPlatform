@@ -1,6 +1,6 @@
 ﻿namespace TutoringPlatform.Models;
 
-public class TutorAvailibility
+public class TutorAvailability
 {
     public int Id { get; set; }
     public required int TutoringAdId { get; set; }

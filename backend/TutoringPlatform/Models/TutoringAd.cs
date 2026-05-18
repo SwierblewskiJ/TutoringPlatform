@@ -12,5 +12,5 @@ public class TutoringAd
     public required int TutorId { get; set; }
     public User? Tutor { get; set; }
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
-    public ICollection<TutorAvailibility> TutorAvailabilities { get; set; } = new List<TutorAvailibility>();
+    public ICollection<TutorAvailability> TutorAvailabilities { get; set; } = new List<TutorAvailability>();
 }
