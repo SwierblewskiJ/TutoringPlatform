@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchData } from "../services/ApiService";
 import type { TutoringAd } from "../types/TutoringAds";
 import Spinner from "../components/Spinner";
+import toast from "react-hot-toast";
 
 const AdDetails = () => {
     const {id} = useParams();
@@ -15,7 +16,51 @@ const AdDetails = () => {
         fetchData<TutoringAd>(`/Ads/${id}`).then(setAd);
     }, [id])
 
-    if (!ad) return <Spinner text="Pobieranie ofert..."/>;
+    const handleDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if(!value) return;
+
+        const selected = new Date(value);
+        const hours = selected.getHours();
+        const minutes = selected.getMinutes();
+        const day = selected.getDay();
+
+        let date = new Date();
+        let currentHour = date.getHours();
+        let currentMinute = date.getMinutes();
+        let currentDay = date.getDay();
+        
+
+        if(hours < 8 || hours >= 22){
+            toast.error("Korepetycje są dostępne tylko w godzinach 08:00 - 22:00!");
+            setSelectedDate("");
+            e.target.value = "";
+            return;
+        } else if (hours == currentHour){
+            if(minutes < currentMinute){
+                toast.error("Nie rezerwuj terminów z przeszłości!");
+                setSelectedDate("");
+                e.target.value = "";
+                return;
+            }
+            
+        } else if(hours < currentHour && (currentDay <= day)){
+            toast.error("Nie rezerwuj terminów z przeszłości!");
+            setSelectedDate("");
+            e.target.value = "";
+            return; 
+        }
+
+
+        setSelectedDate(value);
+    };
+
+    const getMinDate = () => {
+        const now = new Date();
+        return now.toISOString().slice(0, 16);
+    };
+
+    if (!ad) return <Spinner text="Pobieranie oferty..."/>;
 
     return (
         <div className="ad-details-layout">
@@ -39,8 +84,14 @@ const AdDetails = () => {
                         <input 
                             type="datetime-local" 
                             className="form-input"
-                            onChange={(e) => setSelectedDate(e.target.value)}
+                            onChange={handleDataChange}
+                            min={getMinDate()}
                         />
+                        <p>
+                            Sprawdź dzień i godzinę,
+                            <br />dostępność wyznacza prowadzący, 
+                            <br />obowiązuje zakres wyboru od 8:00 do 22:00 z co najmniej 3 godiznnym wyprzedzeniem przez cały tydzień 
+                        </p>
                         <button 
                             className="btn-primary" 
                             // onClick={handleBooking}
