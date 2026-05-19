@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FaRegUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
         const { user, logout} = useAuth();
@@ -22,7 +23,10 @@ const Navbar = () => {
                 )}
                 {!!user ? (
                     <>
-                    <span className="user-name">Witaj, {user.name}!</span>
+                    <span className="user-name">Witaj, <Link to="/me">{user.name}!</Link></span>
+
+                    <Link to="/me"><FaRegUserCircle size={25} color="#a0aec0" /> </Link>
+
                     <button onClick={logout} className="btn-secondary">
                         Wyloguj
                     </button>

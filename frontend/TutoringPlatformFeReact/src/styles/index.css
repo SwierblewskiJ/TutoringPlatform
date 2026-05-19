@@ -136,6 +136,11 @@ html, body {
   letter-spacing: 0.5px;
 }
 
+.user-name a {
+  text-decoration: none;
+  color: inherit; 
+  font-weight: 500;
+}
 
 
 /* --- FORMULARZE --- */
