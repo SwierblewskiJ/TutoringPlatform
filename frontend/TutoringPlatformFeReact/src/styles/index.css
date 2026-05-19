@@ -496,3 +496,156 @@ html, body {
 .react-hot-toast b {
   font-weight: 600;
 }
+
+/* AdDetails: */
+
+.ad-details-layout{
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 2.5rem;
+  align-items: flex-start;
+  margin-top: 2rem;
+}
+
+.ad-main-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow);
+}
+
+.ad-main-content h1 {
+  color: var(--text-h);
+  font-size: 2.2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.ad-meta {
+  display: flex;
+  gap: 1.5rem;
+  color: var(--text-p);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.ad-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.ad-main-content hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.ad-main-content .description {
+  color: var(--text-p);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  white-space: pre-line; 
+}
+
+.booking-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  position: sticky;
+  top: 2rem; 
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.price-tag {
+  color: var(--accent); 
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.price-tag span {
+  font-size: 1rem;
+  color: var(--text-p);
+  font-weight: 400;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-form label {
+  color: var(--text-h);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* dla kalendarza */
+.booking-form .form-input[type="datetime-local"] {
+  font-family: inherit;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.booking-form .form-input[type="datetime-local"]:focus {
+  border-color: var(--accent);
+}
+
+.booking-form .form-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.booking-card .btn-primary {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.booking-card .btn-primary:disabled {
+  background: var(--border);
+  color: var(--text-p);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+.auth-prompt {
+  text-align: center;
+  color: var(--text-p);
+  font-size: 0.95rem;
+  display: block;
+}
+
+.auth-prompt .btn-secondary {
+  width: 100%;
+  padding: 12px;
+}
+
+.auth-prompt p {
+  margin-bottom: 2rem;
+}
