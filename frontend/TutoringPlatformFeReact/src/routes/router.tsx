@@ -7,6 +7,7 @@ import Register from '../pages/Register';
 import AddAdPage from '../pages/AddAdPage';
 import NotFound from '../pages/NotFound';
 import MyProfile from '../pages/MyProfile';
+import AdDetails from '../pages/AdDetails';
 
 
 export const router = createBrowserRouter([
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
             {path: "/", element: <Home/>},
             {path: "/login", element: <Login/>},
             {path: "/register", element: <Register/> },
+            {path: "/ad/:id" , element: <AdDetails/>},
 
             {path: "*", element: <NotFound/>},
 

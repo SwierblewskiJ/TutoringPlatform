@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { TutoringAd } from "../types/TutoringAds";
 
 const AdCard = ({ad} : {ad : TutoringAd}) => {
@@ -21,7 +22,9 @@ const AdCard = ({ad} : {ad : TutoringAd}) => {
                     <span className="ad-price">{ad.price} zł/h</span>
                     <span className="ad-tutor">korepetytor: {ad.tutorName || "Anonim"}</span>
                 </div>
-                <button className="btn-primary-sm">Szczegóły</button>
+                <Link to={`/ad/${ad.id}`}>
+                    <button className="btn-primary-sm">Szczegóły</button>
+                </Link>
             </div>
         </div>
     );
