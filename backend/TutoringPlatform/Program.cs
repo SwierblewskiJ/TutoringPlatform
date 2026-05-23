@@ -51,6 +51,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAdsService, AdsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILessonsService, LessonsService>();
+builder.Services.AddScoped<ITutorAvailabilitiesService, TutorAvailabilitiesService>();
 builder.Services.AddControllers();
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
