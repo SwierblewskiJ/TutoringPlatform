@@ -25,7 +25,7 @@ public class TutorAvailabilitiesController : ControllerBase
     }
 
     [Authorize(Roles = "Tutor")]
-    [HttpGet("ad/{adId}")]
+    [HttpPost("ad/{adId}")]
     public async Task<IActionResult> AddAvailability(int adId, CreateTutorAvailabilityDto dto)
     {
         var tutorIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
