@@ -11,6 +11,7 @@ public interface ILessonsService
     Task<Lesson?> BookLessonAsync(int studentId, BookLessonDto bookLessonDto);
     Task<bool> ChangeStatusByTutorAsync(int tutorId, int lessonId, LessonStatus newStatus);
     Task<bool> CancelByStudentAsync(int studentId, int lessonId);
+    Task<IEnumerable<LessonDetailsDto>> GetMyLessonsAsync(int userId, string role);
 }
 
 public class LessonsService : ILessonsService
@@ -30,6 +31,11 @@ public class LessonsService : ILessonsService
         if (availability == null)
         {
             return null;
+        }
+
+        if (bookLessonDto.StartDate <= DateTime.UtcNow.AddDays(1))
+        {
+            throw new InvalidOperationException("Rezerwacji można dokonać z co najmniej 1-dniowym wyprzedzeniem");
         }
 
         var isOccupied = await _context.Lessons
@@ -103,5 +109,38 @@ public class LessonsService : ILessonsService
         await _context.SaveChangesAsync();
         
         return true;
+    }
+    
+    public async Task<IEnumerable<LessonDetailsDto>> GetMyLessonsAsync(int userId, string role)
+    {
+        var query = _context.Lessons
+            .Include(l => l.TutoringAd)
+            .ThenInclude(a => a!.Tutor)
+            .Include(l => l.Student)
+            .AsQueryable();
+
+        if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(l => l.StudentId == userId);
+        }
+        else if (role.Equals("Tutor", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(l => l.TutoringAd!.TutorId == userId);
+        }
+
+        var lessons = await query.OrderByDescending(l => l.StartTime).ToListAsync();
+
+        return lessons.Select(l => new LessonDetailsDto
+        {
+            Id = l.Id,
+            StartTime = l.StartTime,
+            Status = l.Status.ToString(),
+            IsRecurring = l.IsReccuring,
+            RemainingLessons = l.RemainingLessons,
+            AdTitle = l.TutoringAd!.Title,
+            RelatedUser = role.Equals("Student", StringComparison.OrdinalIgnoreCase)
+                ? l.TutoringAd.Tutor!.Name
+                : l.Student!.Name
+        });
     }
 }
