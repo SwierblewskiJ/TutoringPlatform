@@ -98,4 +98,20 @@ public class LessonsController : ControllerBase
             return BadRequest(new { error = e.Message });
         }
     }
+    
+    [Authorize]
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyLessons()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (!int.TryParse(userIdString, out int userId) || string.IsNullOrEmpty(role))
+        {
+            return Unauthorized();
+        }
+
+        var lessons = await _lessonsService.GetMyLessonsAsync(userId, role);
+        return Ok(lessons);
+    }
 }
