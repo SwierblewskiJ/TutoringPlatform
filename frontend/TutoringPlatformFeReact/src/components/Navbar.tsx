@@ -21,6 +21,11 @@ const Navbar = () => {
                         <button className="btn-secondary">Dodaj ogłoszenie</button>
                     </Link>
                 )}
+                {user?.role === "Student" && (
+                    <Link to="/me">
+                        <button className="btn-secondary">Moje zajęcia</button>
+                    </Link>
+                )} 
                 {!!user ? (
                     <>
                     <span className="user-name">Witaj, <Link to="/me">{user.name}!</Link></span>
