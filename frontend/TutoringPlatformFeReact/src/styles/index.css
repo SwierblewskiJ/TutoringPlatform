@@ -593,59 +593,29 @@ html, body {
   font-weight: 600;
 }
 
-/* dla kalendarza */
-.booking-form .form-input[type="datetime-local"] {
-  font-family: inherit;
-  background: rgba(0, 0, 0, 0.2);
+/* lista dla rezerwacji */
+.booking-form select.form-input {
+  background-color: rgba(0, 0, 0, 0.2);
   color: var(--text-h);
   border: 1px solid var(--border);
   padding: 12px;
   border-radius: 10px;
   cursor: pointer;
-  outline: none;
-  transition: border-color 0.2s;
+  appearance: none; 
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px; 
 }
 
-.booking-form .form-input[type="datetime-local"]:focus {
-  border-color: var(--accent);
+.booking-form select.form-input option {
+  background-color: var(--bg-card); 
+  color: var(--text-h);
 }
 
-.booking-form .form-input::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.booking-card .btn-primary {
-  width: 100%;
-  padding: 14px;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-top: 0.5rem;
-}
-
-.booking-card .btn-primary:disabled {
-  background: var(--border);
-  color: var(--text-p);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-
-.auth-prompt {
-  text-align: center;
-  color: var(--text-p);
-  font-size: 0.95rem;
-  display: block;
-}
-
-.auth-prompt .btn-secondary {
-  width: 100%;
-  padding: 12px;
-}
-
-.auth-prompt p {
-  margin-bottom: 2rem;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1.2rem;
 }

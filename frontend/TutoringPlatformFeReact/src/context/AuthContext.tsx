@@ -28,8 +28,7 @@ export const AuthProvider = ({ children }: {children : React.ReactNode}) => {
     const userData: User = {
       id: decoded.sub,
       name: decoded.Name,
-      role: decoded.role || 
-            decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+      role: decoded.Role,
     };
     
     setUser(userData);

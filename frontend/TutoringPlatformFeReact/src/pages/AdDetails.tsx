@@ -5,62 +5,64 @@ import { fetchData } from "../services/ApiService";
 import type { TutoringAd } from "../types/TutoringAds";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
+import type { TutorAvailability } from "../types/TutorAvailability";
 
 const AdDetails = () => {
-    const {id} = useParams();
-    const {isAuthenticated} = useAuth();
+    const { id } = useParams();
+    const { isAuthenticated } = useAuth();
     const [ad, setAd] = useState<TutoringAd | null>(null);
-    const [selectedDate, setSelectedDate] = useState("");
+    const [availabilities, setAvailabilities] = useState<TutorAvailability[]>([]);
+
+    const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<number | null>(null);
+    const [selectedDate, setSelectedDate] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] =useState<boolean>(false); 
 
     useEffect(() => {
-        fetchData<TutoringAd>(`/Ads/${id}`).then(setAd);
-    }, [id])
+        const loadData = async () => {
+            try {
+                const [adData, availabilityData] = await Promise.all([
+                    fetchData<TutoringAd>(`/Ads/${id}`),
+                    fetchData<TutorAvailability[]>(`/TutorAvailabilities/ad/${id}`)
+                ]);
 
-    const handleDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        if(!value) return;
-
-        const selected = new Date(value);
-        const hours = selected.getHours();
-        const minutes = selected.getMinutes();
-        const day = selected.getDay();
-
-        let date = new Date();
-        let currentHour = date.getHours();
-        let currentMinute = date.getMinutes();
-        let currentDay = date.getDay();
-        
-
-        if(hours < 8 || hours >= 22){
-            toast.error("Korepetycje są dostępne tylko w godzinach 08:00 - 22:00!");
-            setSelectedDate("");
-            e.target.value = "";
-            return;
-        } else if (hours == currentHour){
-            if(minutes < currentMinute){
-                toast.error("Nie rezerwuj terminów z przeszłości!");
-                setSelectedDate("");
-                e.target.value = "";
-                return;
+                setAd(adData);
+                setAvailabilities(availabilityData);
+            } catch (error) {
+                toast.error("Błąd ładowania danych ogłoszenia");
             }
+        };
+        loadData();
+    }, [id]);
+
+    const handleBookingSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedAvailabilityId || !selectedDate) return;
+
+        setIsSubmitting(true);
+
+        try {
+            await fetchData("/Lessons/book", {
+                method: "POST",
+                body: {
+                    tutorAvailabilityId: selectedAvailabilityId,
+                    startDate: new Date(selectedDate).toISOString(),
+                    isRecurring: false,
+                    packageCount: 1 ,
+                }
+            });
             
-        } else if(hours < currentHour && (currentDay <= day)){
-            toast.error("Nie rezerwuj terminów z przeszłości!");
+            setSelectedAvailabilityId(null);
             setSelectedDate("");
-            e.target.value = "";
-            return; 
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
         }
-
-
-        setSelectedDate(value);
     };
 
-    const getMinDate = () => {
-        const now = new Date();
-        return now.toISOString().slice(0, 16);
-    };
+    const daysMap = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
 
-    if (!ad) return <Spinner text="Pobieranie oferty..."/>;
+    if (!ad) return <Spinner text="Pobieranie oferty..." />;
 
     return (
         <div className="ad-details-layout">
@@ -74,43 +76,59 @@ const AdDetails = () => {
                 <p className="description">{ad.description}</p>
             </section>
 
-
             <aside className="booking-card">
                 <div className="price-tag">{ad.price} zł <span>/ h</span></div>
 
                 {isAuthenticated ? (
-                    <div className="booking-form">
-                        <label>Wybierz termin:</label>
-                        <input 
-                            type="datetime-local" 
-                            className="form-input"
-                            onChange={handleDataChange}
-                            min={getMinDate()}
-                        />
-                        <p>
-                            Sprawdź dzień i godzinę,
-                            <br />dostępność wyznacza prowadzący, 
-                            <br />obowiązuje zakres wyboru od 8:00 do 22:00 z co najmniej 3 godiznnym wyprzedzeniem przez cały tydzień 
-                        </p>
+                    <form className="booking-form" onSubmit={handleBookingSubmit}>
+                        <div className="form-group">
+                            <label>Wybierz dzień tygodnia i godziny:</label>
+                            <select 
+                                required
+                                className="form-input"
+                                value={selectedAvailabilityId || ""}
+                                onChange={(e) => setSelectedAvailabilityId(Number(e.target.value) || null)}
+                            >
+                                <option value="">-- Wybierz wolny termin --</option>
+                                {availabilities.map((av) => (
+                                    <option key={av.id} value={av.id}>
+                                        {daysMap[av.dayOfWeek]} ({av.startTime.slice(0, 5)} - {av.endTime.slice(0, 5)})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {selectedAvailabilityId && (
+                            <div className="form-group">
+                                <label>Wybierz dokładną datę zajęć:</label>
+                                <input 
+                                    type="date" 
+                                    className="form-input"
+                                    required
+                                    value={selectedDate}
+                                    min={new Date().toISOString().split("T")[0]} 
+                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                />
+                            </div>
+                        )}
+
                         <button 
-                            className="btn-primary" 
-                            // onClick={handleBooking}
-                            disabled={!selectedDate}
+                            type="submit" 
+                            className="btn-primary"
+                            disabled={!selectedAvailabilityId || !selectedDate || isSubmitting}
                         >
-                            Zarezerwuj lekcję
+                            {isSubmitting ? "Rezerwacja..." : "Wyślij prośbę o rezerwację"}
                         </button>
-                    </div>
+                    </form>
                 ) : (
                     <div className="auth-prompt">
-                        <p>Zaloguj się, aby zarezerwować termin.</p>
-                        <Link to="/login" className="btn-secondary">Logowanie</Link>
+                        <p>Zaloguj się jako student, aby zarezerwować te zajęcia.</p>
+                        <Link to="/login" className="btn-secondary">Zaloguj się</Link>
                     </div>
                 )}
-
             </aside>
         </div>
     );
-
 };
 
 export default AdDetails;
