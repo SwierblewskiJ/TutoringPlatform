@@ -104,7 +104,7 @@ public class LessonsController : ControllerBase
     public async Task<IActionResult> GetMyLessons()
     {
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value ?? User.FindFirst("Role")?.Value;;
 
         if (!int.TryParse(userIdString, out int userId) || string.IsNullOrEmpty(role))
         {
