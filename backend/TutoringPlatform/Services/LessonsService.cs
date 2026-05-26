@@ -33,7 +33,9 @@ public class LessonsService : ILessonsService
             return null;
         }
 
-        if (bookLessonDto.StartDate <= DateTime.UtcNow.AddDays(1))
+        var utcStartDate = bookLessonDto.StartDate.ToUniversalTime();
+        
+        if (utcStartDate <= DateTime.UtcNow.AddDays(1))
         {
             throw new InvalidOperationException("Rezerwacji można dokonać z co najmniej 1-dniowym wyprzedzeniem");
         }
@@ -49,7 +51,7 @@ public class LessonsService : ILessonsService
 
         var lesson = new Lesson
         {
-            StartTime = bookLessonDto.StartDate,
+            StartTime = utcStartDate,
             IsRecurring = bookLessonDto.IsRecurring,
             RemainingLessons = bookLessonDto.PackageCount,
             Status = LessonStatus.Pending,
