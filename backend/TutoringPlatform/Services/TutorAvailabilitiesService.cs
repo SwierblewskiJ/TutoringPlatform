@@ -53,6 +53,13 @@ public class TutorAvailabilitiesService : ITutorAvailabilitiesService
             throw new InvalidOperationException("Godzina rozpoczęcia musi być wcześniejsza niż godzina zakończenia");
         }
 
+        var totalDuration = dto.EndTime - dto.StartTime;
+
+        if (totalDuration.TotalMinutes < 45 || totalDuration.TotalHours > 3)
+        {
+            throw new InvalidOperationException("Lekcja musi trwać między 45 minut a 3 godziny");
+        }
+        
         var availability = new TutorAvailability
         {
             TutoringAdId = adId,
