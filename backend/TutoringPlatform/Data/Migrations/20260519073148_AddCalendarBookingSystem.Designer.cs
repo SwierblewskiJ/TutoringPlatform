@@ -33,7 +33,7 @@ namespace TutoringPlatform.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsReccuring")
+                    b.Property<bool>("IsRecurring")
                         .HasColumnType("boolean");
 
                     b.Property<int?>("RemainingLessons")

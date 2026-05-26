@@ -6,7 +6,7 @@ public class Lesson
     public required DateTime StartTime { get; set; }
     public required LessonStatus Status { get; set; } = LessonStatus.Pending;
 
-    public required bool IsReccuring { get; set; }
+    public required bool IsRecurring { get; set; }
     public int? RemainingLessons { get; set; }
     
     public required int StudentId { get; set; }
