@@ -13,7 +13,7 @@ namespace TutoringPlatform.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "IsReccuring",
+                name: "IsRecurring",
                 table: "Lessons",
                 type: "boolean",
                 nullable: false,
@@ -88,7 +88,7 @@ namespace TutoringPlatform.Data.Migrations
                 table: "Lessons");
 
             migrationBuilder.DropColumn(
-                name: "IsReccuring",
+                name: "IsRecurring",
                 table: "Lessons");
 
             migrationBuilder.DropColumn(

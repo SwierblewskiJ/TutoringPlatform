@@ -30,7 +30,7 @@ export interface Lesson {
     id: number;
     startTime: string; 
     status: LessonStatus;
-    isReccuring: boolean;
+    isRecurring: boolean;
     remainingLessons?: number;
     studentId: number;
     tutoringAdId: number;

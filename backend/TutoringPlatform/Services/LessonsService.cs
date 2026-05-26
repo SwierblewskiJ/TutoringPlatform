@@ -50,7 +50,7 @@ public class LessonsService : ILessonsService
         var lesson = new Lesson
         {
             StartTime = bookLessonDto.StartDate,
-            IsReccuring = bookLessonDto.IsRecurring,
+            IsRecurring = bookLessonDto.IsRecurring,
             RemainingLessons = bookLessonDto.PackageCount,
             Status = LessonStatus.Pending,
             StudentId = studentId,
@@ -135,7 +135,7 @@ public class LessonsService : ILessonsService
             Id = l.Id,
             StartTime = l.StartTime,
             Status = l.Status.ToString(),
-            IsRecurring = l.IsReccuring,
+            IsRecurring = l.IsRecurring,
             RemainingLessons = l.RemainingLessons,
             AdTitle = l.TutoringAd!.Title,
             RelatedUser = role.Equals("Student", StringComparison.OrdinalIgnoreCase)
