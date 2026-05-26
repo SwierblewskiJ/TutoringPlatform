@@ -31,10 +31,12 @@ const Navbar = () => {
                     <span className="user-name">Witaj, <Link to="/me">{user.name}!</Link></span>
 
                     <Link to="/me"><FaRegUserCircle size={25} color="#a0aec0" /> </Link>
-
+                    
+                    <Link to={'/'}>
                     <button onClick={logout} className="btn-secondary">
                         Wyloguj
                     </button>
+                    </Link>
                     </>
                 ) : <>
                     <Link to="/login" >
