@@ -1,7 +1,7 @@
 export interface TutorAvailability {
     id: number;
     tutoringAdId: number;
-    dayOfWeek: number;
+    dayOfWeek: string;
     startTime: string;
     endTime:string;
 }
