@@ -6,6 +6,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import AddAdPage from '../pages/AddAdPage';
 import NotFound from '../pages/NotFound';
+import MyProfile from '../pages/MyProfile';
 import AdDetails from '../pages/AdDetails';
 
 
@@ -16,8 +17,10 @@ export const router = createBrowserRouter([
         children: [
 
             {path: "/", element: <Home/>},
+            {path: "/ad/:id" , element: <AdDetails/>},
             {path: "/login", element: <Login/>},
             {path: "/register", element: <Register/> },
+            {path: "/me", element: <MyProfile/>},
             {path: "/ad/:id" , element: <AdDetails/>},
 
             {path: "*", element: <NotFound/>},
@@ -25,7 +28,7 @@ export const router = createBrowserRouter([
             {
                 element: <AuthGuard/>,
                 children: [
-                    // { path: "/me", element: <Profile /> },
+                    {path: "/me", element: <MyProfile/>},
                 ]
 
             },

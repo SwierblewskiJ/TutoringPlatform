@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FaRegUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
         const { user, logout} = useAuth();
@@ -20,12 +21,22 @@ const Navbar = () => {
                         <button className="btn-secondary">Dodaj ogłoszenie</button>
                     </Link>
                 )}
+                {user?.role === "Student" && (
+                    <Link to="/me">
+                        <button className="btn-secondary">Moje zajęcia</button>
+                    </Link>
+                )} 
                 {!!user ? (
                     <>
-                    <span className="user-name">Witaj, {user.name}!</span>
+                    <span className="user-name">Witaj, <Link to="/me">{user.name}!</Link></span>
+
+                    <Link to="/me"><FaRegUserCircle size={25} color="#a0aec0" /> </Link>
+                    
+                    <Link to={'/'}>
                     <button onClick={logout} className="btn-secondary">
                         Wyloguj
                     </button>
+                    </Link>
                     </>
                 ) : <>
                     <Link to="/login" >

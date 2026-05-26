@@ -45,12 +45,12 @@ public class TutorAvailabilitiesService : ITutorAvailabilitiesService
 
         if (ad.TutorId != tutorId)
         {
-            throw new UnauthorizedAccessException("Nie możesz zarządzać grafikiem tego ogłoszenia.");
+            throw new UnauthorizedAccessException("Nie możesz zarządzać grafikiem tego ogłoszenia");
         }
 
         if (dto.StartTime >= dto.EndTime)
         {
-            throw new InvalidOperationException("Godzina rozpoczęcia musi być wcześniejsza niż godzina zakończenia.");
+            throw new InvalidOperationException("Godzina rozpoczęcia musi być wcześniejsza niż godzina zakończenia");
         }
 
         var availability = new TutorAvailability
