@@ -52,7 +52,7 @@ const AdDetails = () => {
             method: "POST",
             body: {
                 tutorAvailabilityId: selectedAvailabilityId,
-                startDate: new Date(fullDateTimeString).toISOString(),
+                startDate: fullDateTimeString,
                 isRecurring: isRecurring,
                 packageCount: isRecurring ? weekCount : 1,
             }
@@ -81,18 +81,28 @@ const AdDetails = () => {
         const [year, month, day] = dateValue.split("-").map(Number);
         const dateObj = new Date(year, month - 1, day);
         
-        const chosenDayName = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+        const chosenDayIndex = dateObj.getDay(); 
 
-        if (chosenDayName !== selectedAv.dayOfWeek) {
-            toast.error('Wybierz ponownie, poprawny dzień.');
-            toast.error(`Wybrana data to ${daysMap[chosenDayName].toLowerCase() || chosenDayName.toLowerCase()}. Korepetytor udostępnia ten termin w: ${daysMap[selectedAv.dayOfWeek].toLowerCase() || selectedAv.dayOfWeek.toLowerCase()}!`);
+        const englishDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const polishDays = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
+
+        const backendDayStr = String(selectedAv.dayOfWeek).toLowerCase().trim();
+        
+        let backendDayIndex = englishDays.indexOf(backendDayStr);
+        if (backendDayIndex === -1) {
+            backendDayIndex = polishDays.indexOf(backendDayStr);
+        }
+
+        if (chosenDayIndex !== backendDayIndex) {
+            toast.error('Wybierz ponownie poprawny dzień.');
+            toast.error(`Wybrana data to ${polishDays[chosenDayIndex]}. Korepetytor udostępnia ten termin: ${polishDays[backendDayIndex] || selectedAv.dayOfWeek}!`);
             setSelectedDate("");
             e.target.value = ""; 
             return;
         }
 
         setSelectedDate(dateValue);
-    };
+};
 
     const daysMap: Record<string, string> = {
         "Sunday": "Niedziela",
@@ -103,6 +113,9 @@ const AdDetails = () => {
         "Friday": "Piątek",
         "Saturday": "Sobota"
     };
+
+    const today = new Date();
+    const minDateLocal = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
     if (!ad) return <Spinner text="Pobieranie oferty..." />;
 
@@ -149,7 +162,7 @@ const AdDetails = () => {
                                     className="form-input"
                                     required
                                     value={selectedDate}
-                                    min={new Date().toISOString().split("T")[0]} 
+                                    min={minDateLocal} 
                                     onChange={handleDateChange}
                                 />
                             </div>
