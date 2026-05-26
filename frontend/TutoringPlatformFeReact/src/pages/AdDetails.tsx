@@ -16,6 +16,8 @@ const AdDetails = () => {
     const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<number | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>("");
     const [isSubmitting, setIsSubmitting] =useState<boolean>(false); 
+    const [isRecurring, setIsRecurring] = useState<boolean>(false);
+    const [weekCount, setWeekCount] = useState<number>(4);
 
     useEffect(() => {
         const loadData = async () => {
@@ -41,26 +43,66 @@ const AdDetails = () => {
         setIsSubmitting(true);
 
         try {
-            await fetchData("/Lessons/book", {
-                method: "POST",
-                body: {
-                    tutorAvailabilityId: selectedAvailabilityId,
-                    startDate: new Date(selectedDate).toISOString(),
-                    isRecurring: false,
-                    packageCount: 1 ,
-                }
-            });
-            
-            setSelectedAvailabilityId(null);
-            setSelectedDate("");
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsSubmitting(false);
+            const selectedAv = availabilities.find(av => av.id === selectedAvailabilityId);
+            if (!selectedAv) return;
+
+            const fullDateTimeString = `${selectedDate}T${selectedAv.startTime}`;
+
+        const response = await fetchData<any>("/Lessons/book", {
+            method: "POST",
+            body: {
+                tutorAvailabilityId: selectedAvailabilityId,
+                startDate: new Date(fullDateTimeString).toISOString(),
+                isRecurring: isRecurring,
+                packageCount: isRecurring ? weekCount : 1,
+            }
+        });
+
+        if (response && response.message) {
+            toast.success(response.message);
         }
+        
+        setSelectedAvailabilityId(null);
+        setSelectedDate("");
+        setIsRecurring(false);
+    } catch (error) {
+        console.error(error);
+    }
+        
+};
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const dateValue = e.target.value;
+        if (!dateValue || !selectedAvailabilityId) return;
+
+        const selectedAv = availabilities.find(av => av.id === selectedAvailabilityId);
+        if (!selectedAv) return;
+
+        const [year, month, day] = dateValue.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        
+        const chosenDayName = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+
+        if (chosenDayName !== selectedAv.dayOfWeek) {
+            toast.error('Wybierz ponownie, poprawny dzień.');
+            toast.error(`Wybrana data to ${daysMap[chosenDayName].toLowerCase() || chosenDayName.toLowerCase()}. Korepetytor udostępnia ten termin w: ${daysMap[selectedAv.dayOfWeek].toLowerCase() || selectedAv.dayOfWeek.toLowerCase()}!`);
+            setSelectedDate("");
+            e.target.value = ""; 
+            return;
+        }
+
+        setSelectedDate(dateValue);
     };
 
-    const daysMap = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
+    const daysMap: Record<string, string> = {
+        "Sunday": "Niedziela",
+        "Monday": "Poniedziałek",
+        "Tuesday": "Wtorek",
+        "Wednesday": "Środa",
+        "Thursday": "Czwartek",
+        "Friday": "Piątek",
+        "Saturday": "Sobota"
+    };
 
     if (!ad) return <Spinner text="Pobieranie oferty..." />;
 
@@ -92,13 +134,14 @@ const AdDetails = () => {
                                 <option value="">-- Wybierz wolny termin --</option>
                                 {availabilities.map((av) => (
                                     <option key={av.id} value={av.id}>
-                                        {daysMap[av.dayOfWeek]} ({av.startTime.slice(0, 5)} - {av.endTime.slice(0, 5)})
+                                        {daysMap[av.dayOfWeek] || av.dayOfWeek} ({av.startTime.slice(0, 5)} - {av.endTime.slice(0, 5)})
                                     </option>
                                 ))}
                             </select>
                         </div>
 
                         {selectedAvailabilityId && (
+                            <>
                             <div className="form-group">
                                 <label>Wybierz dokładną datę zajęć:</label>
                                 <input 
@@ -107,10 +150,39 @@ const AdDetails = () => {
                                     required
                                     value={selectedDate}
                                     min={new Date().toISOString().split("T")[0]} 
-                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                    onChange={handleDateChange}
                                 />
                             </div>
+                            <div className="form-group checkbox-container">
+                            <label>
+                                <input type="checkbox"
+                                checked={isRecurring}
+                                onChange={(e)=> setIsRecurring(e.target.checked)} 
+                                />
+                                Chcę uczęszczać na zajęcia cyklicznie co tydzień
+                            </label>
+                        </div>
+
+                        {isRecurring && (
+                            <div className="form-group">
+                                <label>Przez ile tygodi (liczba lekcji):</label>
+                                <select className="form-input"
+                                value={weekCount} onChange={(e)=> setWeekCount(Number(e.target.value))}>
+                                
+                                <option value={2}>2 tygodnie (2 lekcje)</option>
+                                <option value={4}>4 tygodnie (1 miesiąc)</option>
+                                <option value={8}>8 tygodni (2 miesiące)</option>
+                                <option value={12}>12 tygodni (3 miesiące)</option>
+
+                                </select>
+                            </div>
                         )}
+                            </>
+                            
+                        )}
+
+                        
+                        
 
                         <button 
                             type="submit" 
