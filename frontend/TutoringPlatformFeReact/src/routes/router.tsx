@@ -20,7 +20,6 @@ export const router = createBrowserRouter([
             {path: "/ad/:id" , element: <AdDetails/>},
             {path: "/login", element: <Login/>},
             {path: "/register", element: <Register/> },
-            {path: "/me", element: <MyProfile/>},
             {path: "/ad/:id" , element: <AdDetails/>},
 
             {path: "*", element: <NotFound/>},
