@@ -107,8 +107,7 @@
 
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Trzyma elementy przy górnej krawędzi */
-  flex-wrap: wrap; /* Na telefonach zrzuci przyciski na dół */
+  align-items: flex-start;
   gap: 1.5rem;
 }
 
@@ -120,6 +119,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1; 
 }
 
 .lesson-header-row h4 {
@@ -362,7 +362,6 @@ input[type="time"].form-input::-webkit-calendar-picker-indicator {
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
-  scale: 0.9;
 }
 
 .btn-success-sm, .btn-danger-sm {
@@ -393,6 +392,7 @@ input[type="time"].form-input::-webkit-calendar-picker-indicator {
   flex-direction: column;
   align-items: flex-end; 
   gap: 0.8rem; 
+  margin-left: auto; 
 }
 
 .status-pending {
@@ -424,6 +424,8 @@ input[type="time"].form-input::-webkit-calendar-picker-indicator {
   border-radius: 6px;
   border: 1px solid rgba(144, 205, 244, 0.2);
   width: fit-content; 
+  opacity: 0.7;
+  scale: 0.9;
 }
 
 /*tutor edycja*/

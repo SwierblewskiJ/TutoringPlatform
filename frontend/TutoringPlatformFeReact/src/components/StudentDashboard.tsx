@@ -75,13 +75,14 @@ const StudentDashboard = ({ lessons, onRefresh }: StudentDashboardProps) => {
                 const remainingLessons = lesson.remainingLessons;
                 const rawStatus = lesson.status;
 
-                const datePart = startTime.split("T")[0]; 
-                const [year, month, day] = datePart.split("-").map(Number);
-
-                const timePart = startTime.split("T")[1].slice(0, 5); 
-
-                const formattedDate = `${day} ${new Date(year, month - 1, day).toLocaleString("pl-PL", { month: "long" })} ${year} ${timePart}`;
-
+                const dateObj = new Date(startTime);
+                const formattedDate = dateObj.toLocaleString("pl-PL", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
                 return (
                     <div key={id} className="lesson-card">
                         <div className="lesson-info">
@@ -94,9 +95,7 @@ const StudentDashboard = ({ lessons, onRefresh }: StudentDashboardProps) => {
 
                         <div className="lesson-actions-wrapper">
                             <div className="lesson-actions">
-                                <span className={`status-tag ${lesson.status.toLowerCase()}`}>
-                                    {renderStatusBadge(rawStatus)}
-                                </span>
+                                {renderStatusBadge(rawStatus)}
                                 
                                 {lesson.status !== "Cancelled" && (
                                     <button
@@ -104,19 +103,18 @@ const StudentDashboard = ({ lessons, onRefresh }: StudentDashboardProps) => {
                                         disabled={isCancelling === lesson.id}
                                         onClick={() => handleCancel(lesson.id)}
                                     >
-                                        {isCancelling === lesson.id ? "Odwoływanie..." : "Odwołaj zajęcia"}
+                                        {isCancelling === lesson.id ? "Odwoływanie..." : "Anuluj rezerwację"}
                                     </button>
                                 )}
                             </div>
-                        </div>
                         
                             {isRecurring && (
                                 <span className="recurring-badge">
                                     Cykliczne (Pozostało lekcji: {remainingLessons})
                                 </span>
                             )}
-                        </div>
-
+                        </div>         
+                    </div>
                 );
             })}
         </div>
