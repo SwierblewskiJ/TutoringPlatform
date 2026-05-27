@@ -8,6 +8,7 @@ import { GiConfirmed } from "react-icons/gi";
 import { IoMdDoneAll } from "react-icons/io";
 import { useEffect, useState } from "react";
 
+import "../styles/myProfile.css"
 
 
 interface TutorDashboardProps {
@@ -17,13 +18,17 @@ interface TutorDashboardProps {
 
 const TutorDashboard = ({ lessons: initialLessons,  onRefresh }: TutorDashboardProps) => {
     const [localLessons, setLocalLessons] = useState<Lesson[]>(initialLessons);
+    const [isUpdating, setIsUpdating] = useState<number | null>(null);
 
     useEffect(() => {
         setLocalLessons(initialLessons);
     }, [initialLessons]);
     
-    const handleStatusChange = async (lessonId: number, newStatusValue: number) => {
+    const handleStatusChange = async (lessonId: number, newStatusValue: number, confirmMessage?: string) => {
+        if (confirmMessage && !window.confirm(confirmMessage)) return;
     try {
+        setIsUpdating(lessonId)
+
         setLocalLessons(prev => 
             prev.map(lesson => 
                 lesson.id === lessonId 
@@ -32,18 +37,26 @@ const TutorDashboard = ({ lessons: initialLessons,  onRefresh }: TutorDashboardP
             )
         );
 
-        // Strzał do API (zostaje bez zmian)
         await fetchData(`/Lessons/${lessonId}/status`, {
             method: "PATCH",
             body: { status: newStatusValue }
         });
 
-        toast.success(newStatusValue === LessonStatus.Confirmed ? "Zaakceptowano lekcję!" : "Odrzucono lekcję.");
+       if (newStatusValue === LessonStatus.Confirmed) {
+            toast.success("Zaakceptowano lekcję!");
+        } else if (newStatusValue === LessonStatus.Cancelled) {
+            toast.success("Zajęcia zostały odwołane/odrzucone.");
+        } else {
+            toast.success("Zaktualizowano status lekcji.");
+        }
         
         onRefresh(); 
     } catch (error) {
         console.error("Błąd podczas zmiany statusu lekcji:", error);
+        toast.error("Nie udało się zmienić statusu zajęć.");
         setLocalLessons(initialLessons);
+    } finally {
+        setIsUpdating(null);
     }
 };
 
@@ -85,17 +98,53 @@ const TutorDashboard = ({ lessons: initialLessons,  onRefresh }: TutorDashboardP
 
                 const formattedDate = `${day} ${new Date(year, month - 1, day).toLocaleString("pl-PL", { month: "long" })} ${year} o godzinie ${timePart}`;
 
+                const isPending = rawStatus === "Pending" || rawStatus === LessonStatus.Pending;
+                const isConfirmed = rawStatus === "Confirmed" || rawStatus === LessonStatus.Confirmed;
 
                 return (
                     <div key={id} className="lesson-card">
+                        
                         <div className="lesson-info">
                             <div className="lesson-header-row">
                                 <h4>{adTitle}</h4>
-                                {renderStatusBadge(rawStatus)}
                             </div>
-                            
                             <p>Uczeń: <strong>{studentName}</strong></p>
                             <p>Termin: <span className="time-text">{formattedDate}</span></p>
+                        </div>
+
+                        <div className="lesson-actions-wrapper">
+                            <div className="lesson-actions">
+                                {renderStatusBadge(rawStatus)}
+                                
+                                {isPending && (
+                                    <>
+                                        <button 
+                                            className="btn-success" 
+                                            disabled={isUpdating === id}
+                                            onClick={() => handleStatusChange(id, LessonStatus.Confirmed)} 
+                                        >
+                                            Potwierdź
+                                        </button>
+                                        <button 
+                                            className="btn-danger-sm" 
+                                            disabled={isUpdating === id}
+                                            onClick={() => handleStatusChange(id, LessonStatus.Cancelled)} 
+                                        >
+                                            Odrzuć
+                                        </button>
+                                    </>
+                                )}
+
+                                {isConfirmed && (
+                                    <button
+                                        className="btn-danger-sm"
+                                        disabled={isUpdating === id}
+                                        onClick={() => handleStatusChange(id, LessonStatus.Cancelled, "Czy jako korepetytor chcesz odwołać te zajęcia?")}
+                                    >
+                                        {isUpdating === id ? "Odwoływanie..." : "Odwołaj lekcję"}
+                                    </button>
+                                )}
+                            </div>
                             
                             {isRecurring && (
                                 <span className="recurring-badge">
@@ -104,22 +153,6 @@ const TutorDashboard = ({ lessons: initialLessons,  onRefresh }: TutorDashboardP
                             )}
                         </div>
 
-                        {(rawStatus === "Pending" || rawStatus === LessonStatus.Pending) && (
-                            <div className="lesson-actions">
-                                <button 
-                                    className="btn-success" 
-                                    onClick={() => handleStatusChange(id, LessonStatus.Confirmed)} 
-                                >
-                                    Potwierdź
-                                </button>
-                                <button 
-                                    className="btn-danger" 
-                                    onClick={() => handleStatusChange(id, LessonStatus.Cancelled)} 
-                                >
-                                    Odrzuć
-                                </button>
-                            </div>
-                        )}
                     </div>
                 );
             })}

@@ -150,7 +150,7 @@ const MyProfile = () => {
                 {profile.role === 'Tutor' ? (
                     <TutorDashboard lessons={lessons} onRefresh={loadDashboardData}/>
                 ) : (
-                    <StudentDashboard lessons={lessons}/>
+                    <StudentDashboard lessons={lessons} onRefresh={loadDashboardData}/>
                 )}
             </main>
 

@@ -308,6 +308,7 @@ html, body {
   align-items: center;
   gap: 10px;
   color: var(--text-h);
+  scale: 0.88;
 }
 
 .filter-group.checkbox input {
@@ -356,6 +357,8 @@ html, body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   filter: brightness(1.05);
 }
+
+.ad-card .btn-primary
 
 .ad-status {
   margin-bottom: 1rem;
@@ -419,7 +422,7 @@ html, body {
 }
 
 /*przycisk adCard*/
-.btn-primary-sm {
+.ad-card .btn-primary-sm {
   background: transparent; 
   color: var(--accent);    
   border: 1px solid var(--accent);
@@ -431,7 +434,7 @@ html, body {
   transition: all 0.2s ease;
 }
 
-.btn-primary-sm:hover {
+.ad-card .btn-primary-sm:hover {
   background: var(--accent); 
   color: white;
   box-shadow: 0 0 10px rgba(224, 108, 85, 0.3);
