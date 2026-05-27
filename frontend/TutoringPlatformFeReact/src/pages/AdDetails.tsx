@@ -6,12 +6,15 @@ import type { TutoringAd } from "../types/TutoringAds";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import type { TutorAvailability } from "../types/TutorAvailability";
+import NotFound from "./NotFound";
 
 const AdDetails = () => {
     const { id } = useParams();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const [ad, setAd] = useState<TutoringAd | null>(null);
     const [availabilities, setAvailabilities] = useState<TutorAvailability[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [isNotFound, setIsNotFound] = useState<boolean>(false);
 
     const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<number | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>("");
@@ -22,6 +25,8 @@ const AdDetails = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
+                setLoading(true);
+                setIsNotFound(false);
                 const [adData, availabilityData] = await Promise.all([
                     fetchData<TutoringAd>(`/Ads/${id}`),
                     fetchData<TutorAvailability[]>(`/TutorAvailabilities/ad/${id}`)
@@ -31,6 +36,9 @@ const AdDetails = () => {
                 setAvailabilities(availabilityData);
             } catch (error) {
                 toast.error("Błąd ładowania danych ogłoszenia");
+                setIsNotFound(true);
+            } finally{
+                setLoading(false);
             }
         };
         loadData();
@@ -117,7 +125,9 @@ const AdDetails = () => {
     const today = new Date();
     const minDateLocal = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    if (!ad) return <Spinner text="Pobieranie oferty..." />;
+    if (loading) return <Spinner text="Pobieranie oferty..." />;
+
+    if (isNotFound || !ad) return <NotFound />;
 
     return (
         <div className="ad-details-layout">
@@ -134,7 +144,7 @@ const AdDetails = () => {
             <aside className="booking-card">
                 <div className="price-tag">{ad.price} zł <span>/ h</span></div>
 
-                {isAuthenticated ? (
+                {isAuthenticated && user?.role === "Student" ? (
                     <form className="booking-form" onSubmit={handleBookingSubmit}>
                         <div className="form-group">
                             <label>Wybierz dzień tygodnia i godziny:</label>
@@ -194,9 +204,6 @@ const AdDetails = () => {
                             
                         )}
 
-                        
-                        
-
                         <button 
                             type="submit" 
                             className="btn-primary"
@@ -205,15 +212,23 @@ const AdDetails = () => {
                             {isSubmitting ? "Rezerwacja..." : "Wyślij prośbę o rezerwację"}
                         </button>
                     </form>
-                ) : (
+                ) :  isAuthenticated && user?.role==="Tutor" ? (
                     <div className="auth-prompt">
+                        <p style={{ color: "#b0b0b5" }}>
+                            Jesteś zalogowany jako korepetytor. Tylko uczniowie mogą dokonywać rezerwacji.
+                        </p>
+                    </div>
+
+                ) : <div className="auth-prompt">
                         <p>Zaloguj się jako student, aby zarezerwować te zajęcia.</p>
                         <Link to="/login" className="btn-secondary">Zaloguj się</Link>
                     </div>
-                )}
+            }
             </aside>
         </div>
+                
     );
 };
+
 
 export default AdDetails;
