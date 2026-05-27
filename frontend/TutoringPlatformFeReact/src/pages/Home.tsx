@@ -10,6 +10,7 @@ const Home = () => {
     const [ads, setAds] = useState<TutoringAd[]>([]);
     const [search,setSearch] = useState('');
     const [onlyOnline, setOnlyOnline] = useState(false);
+    const [onlyStationary, setOnlyStationary] = useState<boolean>(false);
     const [maxPrice, setMaxPrice] = useState<number | ''>('');
     const [loading, setLoading] = useState(false);
 
@@ -21,7 +22,14 @@ const Home = () => {
         try{
             const params = new URLSearchParams();
             if(search) params.append('searchPhrase',search);
-            if(onlyOnline) params.append('isOnline','true');
+
+            if(onlyOnline) {
+                params.append('isOnline', 'true');
+                setOnlyStationary(false);
+            } else if (onlyStationary) {
+                params.append('isOnline', 'false');
+                setOnlyOnline(false);
+            }
             if(maxPrice) params.append('maxPrice', maxPrice.toString());
 
             const [data] = await Promise.all([fetchData<TutoringAd[]>(`/Ads?${params.toString()}`),timer]);  
@@ -65,8 +73,31 @@ const Home = () => {
                 </div>
 
                 <div className="filter-group checkbox">
-                    <input type="checkbox" id="online" checked={onlyOnline} onChange={(e) => setOnlyOnline(e.target.checked)} />
+                    <input
+                        type="checkbox"
+                        id="online"
+                        checked={onlyOnline}
+                        onChange={(e) => {
+                            setOnlyOnline(e.target.checked);
+                            if (e.target.checked) {
+                                setOnlyStationary(false);
+                            }
+                        }}
+                    />
                     <label htmlFor="online">Tylko online</label>
+
+                    <input
+                        type="checkbox"
+                        id="stationary"
+                        checked={onlyStationary}
+                        onChange={(e) => {
+                            setOnlyStationary(e.target.checked);
+                            if (e.target.checked) {
+                                setOnlyOnline(false);
+                            }
+                        }}
+                    />
+                    <label htmlFor="stationary">Tylko Stacjonarnie</label>
                 </div>
 
                 <button className="btn-primary auth-button" onClick={fetchAds} type="submit">
